@@ -8,17 +8,20 @@ import {
     StyleSheet,
     ActivityIndicator,
     Alert,
+    KeyboardAvoidingView,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
+    ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
+import { Colors, Spacing, Typography, Shadows } from "../../theme";
 
-/**
- * Sign In Screen component.
- * Allows users to authenticate using email and password.
- */
-export default function SignIn(){
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+export default function SignIn() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { signIn } = useAuth();
 
@@ -28,86 +31,149 @@ export default function SignIn(){
             return;
         }
 
+        setIsSubmitting(true);
         const { error } = await signIn(email, password);
-        if (error) {
-            Alert.alert("Login failed:", error.message);
-        }
-    }
+        setIsSubmitting(false);
 
+        if (error) {
+            Alert.alert("Login failed", error.message);
+        }
+    };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Welcome to Vaulty</Text>
-            <Text style={styles.subtitle}>Secure your rentals</Text>
-
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                keyboardType="email-address"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
-
-            <TouchableOpacity
-                style={[styles.button, isSubmitting && styles.buttonDisabled]}
-                onPress={handleSignIn}
-                disabled={isSubmitting}
+        <SafeAreaView style={styles.container}>
+            {/* 
+                KeyboardAvoidingView: Pushes content up when keyboard opens.
+                - iOS uses 'padding', Android uses 'height' (Standard React Native practice)
+            */}
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-                {isSubmitting ? (
-                    <ActivityIndicator color="#FFF" />
-                ) : (
-                    <Text style={styles.buttonText}>Sign Up</Text>
-                )}
-            </TouchableOpacity>
+                {/* Dismisses keyboard when tapping outside inputs */}
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    {/* ScrollView allows scrolling on small screens */}
+                    <ScrollView
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={styles.content}>
+                            <Text style={styles.title}>Welcome Back</Text>
+                            <Text style={styles.subtitle}>
+                                Sign in to secure your rentals
+                            </Text>
 
-            <Link href="/(auth)/sign-up" style={styles.link}>
-                <Text> Don't have an account? Sign Up</Text>
-            </Link>
-        </View>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Email address"
+                                placeholderTextColor={Colors.silverDark}
+                                value={email}
+                                onChangeText={setEmail}
+                                autoCapitalize="none"
+                                keyboardType="email-address"
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Password"
+                                placeholderTextColor={Colors.silverDark}
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry
+                            />
+
+                            <TouchableOpacity
+                                style={[
+                                    styles.button,
+                                    isSubmitting && styles.buttonDisabled,
+                                ]}
+                                onPress={handleSignIn}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                    <ActivityIndicator color={Colors.white} />
+                                ) : (
+                                    <Text style={styles.buttonText}>
+                                        Sign In
+                                    </Text>
+                                )}
+                            </TouchableOpacity>
+
+                            <View style={styles.footer}>
+                                <Text style={styles.footerText}>
+                                    Don't have an account?{" "}
+                                </Text>
+                                <Link href="/(auth)/sign-up" asChild>
+                                    <TouchableOpacity>
+                                        <Text style={styles.linkText}>
+                                            Sign Up
+                                        </Text>
+                                    </TouchableOpacity>
+                                </Link>
+                            </View>
+                        </View>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }
-
-
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: Colors.silverLight,
+    },
+    content: {
+        flex: 1,
         justifyContent: "center",
-        padding: 20,
-        backgroundColor: "#F8FAFC",
+        padding: Spacing.lg,
     },
     title: {
-        fontSize: 32,
-        fontWeight: "bold",
-        color: "#1E293B",
-        marginBottom: 5,
+        ...Typography.h1,
+        marginBottom: Spacing.xs,
     },
-    subtitle: { fontSize: 16, color: "#64748B", marginBottom: 30 },
+    subtitle: {
+        ...Typography.body,
+        marginBottom: Spacing.xl,
+    },
     input: {
-        backgroundColor: "#FFF",
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 15,
+        backgroundColor: Colors.white,
+        padding: Spacing.md,
+        borderRadius: 12,
+        marginBottom: Spacing.md,
         borderWidth: 1,
-        borderColor: "#E2E8F0",
+        borderColor: Colors.silver,
+        fontSize: 16,
+        color: Colors.text,
+    },
+    button: {
+        backgroundColor: Colors.primary,
+        padding: Spacing.md,
+        borderRadius: 12,
+        alignItems: "center",
+        marginTop: Spacing.sm,
+        ...Shadows.button,
     },
     buttonDisabled: {
         opacity: 0.7,
     },
-    button: {
-        backgroundColor: "#3B82F6",
-        padding: 15,
-        borderRadius: 10,
-        alignItems: "center",
+    buttonText: {
+        color: Colors.white,
+        fontSize: 16,
+        fontWeight: "bold",
     },
-    buttonText: { color: "#FFF", fontSize: 16, fontWeight: "bold" },
-    link: { marginTop: 20, alignItems: "center" },
+    footer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: Spacing.xl,
+    },
+    footerText: {
+        color: Colors.textMuted,
+        fontSize: 15,
+    },
+    linkText: {
+        color: Colors.primary,
+        fontSize: 15,
+        fontWeight: "bold",
+    },
 });

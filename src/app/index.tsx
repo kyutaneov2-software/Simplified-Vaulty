@@ -1,29 +1,27 @@
 // src/app/index.tsx
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    SafeAreaView,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+// NEW: Import the theme
+import { Colors, Spacing, Typography, Shadows } from "../theme";
 
-/**
- * Welcome Screen (Landing Page).
- * Displayed to users who are not logged in. Introduces the app and routes them to Auth.
- */
 export default function WelcomeScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.content}>
-                {/* Header Section */}
                 <View style={styles.heroSection}>
-                    <Text style={styles.logoIcon}>🔒</Text>
+                    <View style={styles.iconContainer}>
+                        <Ionicons
+                            name="shield-checkmark"
+                            size={64}
+                            color={Colors.primary}
+                        />
+                    </View>
                     <Text style={styles.title}>Vaulty</Text>
                     <Text style={styles.subtitle}>Secure Smart Rentals</Text>
                 </View>
 
-                {/* Info Section */}
                 <View style={styles.infoSection}>
                     <Text style={styles.description}>
                         Welcome to your ultimate rental companion. Vaulty
@@ -33,7 +31,6 @@ export default function WelcomeScreen() {
                     </Text>
                 </View>
 
-                {/* Action Section */}
                 <View style={styles.actionSection}>
                     <Link href="/(auth)/sign-up" asChild>
                         <TouchableOpacity style={styles.primaryButton}>
@@ -62,74 +59,73 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F8FAFC",
+        backgroundColor: Colors.silverLight, // Using Theme
     },
     content: {
         flex: 1,
-        padding: 24,
-        justifyContent: "space-between", // Spreads the content evenly vertically
+        padding: Spacing.lg, // Using Theme
+        justifyContent: "space-between",
     },
     heroSection: {
         alignItems: "center",
         marginTop: 60,
     },
-    logoIcon: {
-        fontSize: 80,
-        marginBottom: 10,
+    iconContainer: {
+        width: 120,
+        height: 120,
+        backgroundColor: Colors.primaryLight, // Using Theme
+        borderRadius: 60,
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: Spacing.md,
+        ...Shadows.card, // Using Theme Spread
     },
     title: {
-        fontSize: 48,
-        fontWeight: "900",
-        color: "#1E293B",
+        ...Typography.h1, // Using Theme Spread
+        fontSize: 48, // Overriding just the font size
         letterSpacing: -1,
     },
     subtitle: {
         fontSize: 18,
-        color: "#3B82F6",
+        color: Colors.primary, // Using Theme
         fontWeight: "600",
-        marginTop: 5,
+        marginTop: Spacing.xs,
         textTransform: "uppercase",
         letterSpacing: 1,
     },
     infoSection: {
-        paddingHorizontal: 10,
+        paddingHorizontal: Spacing.sm,
     },
     description: {
-        fontSize: 16,
-        color: "#64748B",
+        ...Typography.body, // Using Theme Spread
         textAlign: "center",
-        lineHeight: 24,
     },
     actionSection: {
         marginBottom: 40,
     },
     primaryButton: {
-        backgroundColor: "#3B82F6",
-        padding: 18,
+        backgroundColor: Colors.primary, // Using Theme
+        padding: Spacing.md,
         borderRadius: 15,
         alignItems: "center",
-        shadowColor: "#3B82F6",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.3,
-        shadowRadius: 10,
-        elevation: 6,
+        ...Shadows.button, // Using Theme Spread
     },
     primaryButtonText: {
-        color: "#FFF",
+        color: Colors.white, // Using Theme
         fontSize: 18,
         fontWeight: "bold",
     },
     footerRow: {
         flexDirection: "row",
         justifyContent: "center",
-        marginTop: 24,
+        marginTop: Spacing.lg,
     },
     footerText: {
-        color: "#64748B",
+        color: Colors.textMuted, // Using Theme
         fontSize: 15,
     },
     linkText: {
-        color: "#1E293B",
+        color: Colors.text, // Using Theme
         fontSize: 15,
         fontWeight: "bold",
     },

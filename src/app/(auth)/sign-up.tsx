@@ -8,14 +8,17 @@ import {
     StyleSheet,
     Alert,
     ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
+    ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
+import { Colors, Spacing, Typography, Shadows } from "../../theme";
 
-/**
- * Sign Up Screen component.
- * Allows new users to create an account using their email and password.
- */
 export default function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -25,7 +28,6 @@ export default function SignUp() {
     const { signUp } = useAuth();
 
     const handleSignUp = async () => {
-        // 1. Basic Validation
         if (!email || !password || !confirmPassword) {
             Alert.alert("Error", "Please fill in all fields");
             return;
@@ -41,7 +43,6 @@ export default function SignUp() {
             return;
         }
 
-        // 2. Supabase Authentication
         setIsSubmitting(true);
         const { error } = await signUp(email, password);
         setIsSubmitting(false);
@@ -49,8 +50,6 @@ export default function SignUp() {
         if (error) {
             Alert.alert("Sign Up Failed", error.message);
         } else {
-            // Note: By default, Supabase requires email confirmation.
-            // The user will be redirected to sign in after confirming.
             Alert.alert(
                 "Success",
                 "Account created! Please check your email for a confirmation link before signing in.",
@@ -59,133 +58,154 @@ export default function SignUp() {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Create Account</Text>
-                <Text style={styles.subtitle}>
-                    Join Vaulty and secure your rentals
-                </Text>
-            </View>
+        <SafeAreaView style={styles.container}>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <ScrollView
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={styles.content}>
+                            <View style={styles.header}>
+                                <Text style={styles.title}>Create Account</Text>
+                                <Text style={styles.subtitle}>
+                                    Join Vaulty and secure your rentals
+                                </Text>
+                            </View>
 
-            <View style={styles.form}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email address"
-                    value={email}
-                    onChangeText={setEmail}
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                />
+                            <View style={styles.form}>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Email address"
+                                    placeholderTextColor={Colors.silverDark}
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    autoCapitalize="none"
+                                    keyboardType="email-address"
+                                />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Password (min. 6 characters)"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Password (min. 6 characters)"
+                                    placeholderTextColor={Colors.silverDark}
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry
+                                />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                    secureTextEntry
-                />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Confirm Password"
+                                    placeholderTextColor={Colors.silverDark}
+                                    value={confirmPassword}
+                                    onChangeText={setConfirmPassword}
+                                    secureTextEntry
+                                />
 
-                <TouchableOpacity
-                    style={[
-                        styles.button,
-                        isSubmitting && styles.buttonDisabled,
-                    ]}
-                    onPress={handleSignUp}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? (
-                        <ActivityIndicator color="#FFF" />
-                    ) : (
-                        <Text style={styles.buttonText}>Sign Up</Text>
-                    )}
-                </TouchableOpacity>
-            </View>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.button,
+                                        isSubmitting && styles.buttonDisabled,
+                                    ]}
+                                    onPress={handleSignUp}
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <ActivityIndicator
+                                            color={Colors.white}
+                                        />
+                                    ) : (
+                                        <Text style={styles.buttonText}>
+                                            Sign Up
+                                        </Text>
+                                    )}
+                                </TouchableOpacity>
+                            </View>
 
-            <View style={styles.footer}>
-                <Text style={styles.footerText}>Already have an account? </Text>
-                <Link href="/(auth)/sign-in" asChild>
-                    <TouchableOpacity>
-                        <Text style={styles.linkText}>Sign In</Text>
-                    </TouchableOpacity>
-                </Link>
-            </View>
-        </View>
+                            <View style={styles.footer}>
+                                <Text style={styles.footerText}>
+                                    Already have an account?{" "}
+                                </Text>
+                                <Link href="/(auth)/sign-in" asChild>
+                                    <TouchableOpacity>
+                                        <Text style={styles.linkText}>
+                                            Sign In
+                                        </Text>
+                                    </TouchableOpacity>
+                                </Link>
+                            </View>
+                        </View>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: Colors.silverLight,
+    },
+    content: {
+        flex: 1,
         justifyContent: "center",
-        padding: 24,
-        backgroundColor: "#F8FAFC",
+        padding: Spacing.lg,
     },
     header: {
-        marginBottom: 40,
+        marginBottom: Spacing.xl,
     },
     title: {
-        fontSize: 32,
-        fontWeight: "bold",
-        color: "#1E293B",
-        marginBottom: 8,
+        ...Typography.h1,
+        marginBottom: Spacing.xs,
     },
     subtitle: {
-        fontSize: 16,
-        color: "#64748B",
+        ...Typography.body,
     },
     form: {
         width: "100%",
     },
     input: {
-        backgroundColor: "#FFF",
-        padding: 16,
+        backgroundColor: Colors.white,
+        padding: Spacing.md,
         borderRadius: 12,
-        marginBottom: 16,
+        marginBottom: Spacing.md,
         borderWidth: 1,
-        borderColor: "#E2E8F0",
+        borderColor: Colors.silver,
         fontSize: 16,
-        color: "#1E293B",
+        color: Colors.text,
     },
     button: {
-        backgroundColor: "#3B82F6",
-        padding: 16,
+        backgroundColor: Colors.primary,
+        padding: Spacing.md,
         borderRadius: 12,
         alignItems: "center",
-        marginTop: 8,
-        shadowColor: "#3B82F6",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-        elevation: 4,
+        marginTop: Spacing.sm,
+        ...Shadows.button,
     },
     buttonDisabled: {
         opacity: 0.7,
     },
     buttonText: {
-        color: "#FFF",
+        color: Colors.white,
         fontSize: 16,
         fontWeight: "bold",
     },
     footer: {
         flexDirection: "row",
         justifyContent: "center",
-        marginTop: 32,
+        marginTop: Spacing.xl,
     },
     footerText: {
-        color: "#64748B",
-        fontSize: 14,
+        color: Colors.textMuted,
+        fontSize: 15,
     },
     linkText: {
-        color: "#3B82F6",
-        fontSize: 14,
+        color: Colors.primary,
+        fontSize: 15,
         fontWeight: "bold",
     },
 });
