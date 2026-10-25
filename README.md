@@ -1,8 +1,3 @@
-Here is a complete, professional `README.md` tailored specifically for **Vaulty**. 
-
-I have replaced the default Expo boilerplate with your project's details, including the features we've built so far, the tech stack, setup instructions, and the future roadmap (like AAL2 and ESP32).
-
-You can replace the entire contents of your `README.md` with this:
 
 ```markdown
 # 🔒 Vaulty - Smart Rental Vaults
