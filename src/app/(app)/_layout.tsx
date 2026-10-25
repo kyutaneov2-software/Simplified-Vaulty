@@ -39,9 +39,9 @@ export default function AppLayout() {
             }}
         >
             {/* 
-        Home Tab - maps to app/(app)/HomeScreen.tsx 
-        Make sure your file is named exactly 'HomeScreen.tsx'
-      */}
+                Home Tab - maps to app/(app)/HomeScreen.tsx 
+                Make sure your file is named exactly 'HomeScreen.tsx'
+            */}
             <Tabs.Screen
                 name="HomeScreen"
                 options={{
@@ -56,11 +56,26 @@ export default function AppLayout() {
                     ),
                 }}
             />
+            {/* 
+                Vaults Tab - map to app/(app)/Vault.tsx
+            */}
+            <Tabs.Screen
+                name="Vaults"
+                options={{
+                    title: "Vaults",
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <Ionicons
+                            name={focused ? "cube" : "cube-outline"}
+                            size={size}
+                            color={color as string}
+                        />
+                    ),
+                }}
+            />
 
             {/* 
-        Profile Tab - maps to app/(app)/Profile.tsx
-        FIXED: Changed icon to 'person' and added the missing 'return' keyword
-      */}
+                Profile Tab - maps to app/(app)/Profile.tsx
+            */}
             <Tabs.Screen
                 name="Profile"
                 options={{

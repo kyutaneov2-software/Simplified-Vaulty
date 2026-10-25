@@ -1,5 +1,6 @@
 // src/app/(app)/index.tsx
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { useRouter} from "expo-router";
 // Import SafeAreaView for platform awareness (notches/status bars)
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,8 +14,9 @@ import { Colors, Spacing, Typography, Shadows } from "../../theme";
  */
 export default function Home() {
     const { user } = useAuth();
+    const router = useRouter();
 
-    // Extract the username from the email (e.g., "john" from "john@example.com")
+    // Extract the username from the email (e.g., "jeremy" from "jeremy@example.com")
     const username = user?.email?.split("@")[0] || "User";
 
     return (
@@ -66,6 +68,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.silverLight, // Silver theme background
+
     },
     content: {
         flex: 1,
