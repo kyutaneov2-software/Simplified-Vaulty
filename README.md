@@ -1,5 +1,4 @@
 
-```markdown
 # 🔒 Vaulty - Smart Rental Vaults
 
 Vaulty is a mobile application designed to manage physical rental vaults connected to an ESP32 microcontroller. Built as a school project, this app provides a secure, real-time interface for users to rent, monitor, and unlock their smart vaults.
@@ -78,4 +77,4 @@ Scan the QR code with **Expo Go** or press `a`/`i` to run on an Android/iOS emul
 
 ---
 *Created for our school project. Securing the future of rentals, one vault at a time.*
-```
+
