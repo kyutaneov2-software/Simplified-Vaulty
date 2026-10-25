@@ -1,56 +1,86 @@
-# Welcome to your Expo app 👋
+Here is a complete, professional `README.md` tailored specifically for **Vaulty**. 
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+I have replaced the default Expo boilerplate with your project's details, including the features we've built so far, the tech stack, setup instructions, and the future roadmap (like AAL2 and ESP32).
 
-## Get started
+You can replace the entire contents of your `README.md` with this:
 
-1. Install dependencies
+```markdown
+# 🔒 Vaulty - Smart Rental Vaults
 
-   ```bash
-   npm install
-   ```
+Vaulty is a mobile application designed to manage physical rental vaults connected to an ESP32 microcontroller. Built as a school project, this app provides a secure, real-time interface for users to rent, monitor, and unlock their smart vaults.
 
-2. Start the app
+## 🚀 Current Features
+- **Authentication (Supabase)**: Secure Sign In and Sign Up using email and password.
+- **Welcome Screen**: A polished landing page for unauthenticated users.
+- **Tab Navigation**: Seamless bottom-tab navigation between Home, Vaults, and Profile.
+- **Custom Theme**: A professional "Silver & Blue" design system for a security-focused aesthetic.
+- **Platform Awareness**: Optimized for both iOS and Android (Safe Area, Keyboard Avoiding, Tab Bar heights).
 
-   ```bash
-   npx expo start
-   ```
+## 🛠️ Tech Stack
+- **Frontend**: React Native, Expo (Expo Router for file-based routing)
+- **Language**: TypeScript
+- **Backend & Auth**: Supabase (PostgreSQL, Row Level Security, AAL1 Authentication)
+- **Hardware**: ESP32 (Planned integration for physical vault control)
+- **Icons**: `@expo/vector-icons` (Ionicons)
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+## 📂 Project Structure
+```text
+src/
+ ┣ app/                 # Expo Router file-based routing
+ ┃ ┣ (auth)/            # Unauthenticated routes (sign-in, sign-up)
+ ┃ ┣ (app)/             # Authenticated routes (Home, Vaults, Profile)
+ ┃ ┣ _layout.tsx        # Root layout (Auth state protection)
+ ┃ ┗ index.tsx          # Welcome Screen
+ ┣ context/             # AuthContext for managing session state
+ ┣ lib/                 # Supabase client initialization
+ ┗ theme/               # Global Silver & Blue design system
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+## ⚙️ Getting Started
 
-### Other setup steps
+### 1. Prerequisites
+- [Node.js](https://nodejs.org/) installed
+- [Expo Go](https://expo.dev/go) app on your physical device (or an emulator)
+- A [Supabase](https://supabase.com/) account and project
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### 2. Installation
+Clone the repository and install dependencies:
+```bash
+git clone <your-repo-url>
+cd Vaulty
+npm install
+```
 
-## Learn more
+### 3. Environment Variables
+Create a `.env` file in the root of your project and add your Supabase credentials:
+```env
+EXPO_PUBLIC_SUPABASE_URL=your_supabase_project_url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+*(You can find these in your Supabase Dashboard under **Project Settings -> API**)*
 
-To learn more about developing your project with Expo, look at the following resources:
+### 4. Database Setup
+Ensure your Supabase database has the required tables (`profiles`, `vaults`, `rentals`) and **Row Level Security (RLS)** enabled. *(Refer to the project SQL scripts for the exact schema and security policies).*
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 5. Run the App
+```bash
+npx expo start
+```
+Scan the QR code with **Expo Go** or press `a`/`i` to run on an Android/iOS emulator.
 
-## Join the community
+## 🗺️ Roadmap
+- [x] UI/UX Foundation & Theme
+- [x] Supabase Email Auth (AAL1)
+- [x] Basic Tab Navigation
+- [ ] **AAL2 (MFA)**: Custom Supabase Edge Function for TOTP generation.
+- [ ] **Vaults Screen**: Fetch and display real-time vault statuses from the database.
+- [ ] **ESP32 Integration**: Connect the app to the physical prototype via Supabase Realtime or WebSockets.
 
-Join our community of developers creating universal apps.
+## 📚 Learn More
+- [Expo Documentation](https://docs.expo.dev/)
+- [Supabase Documentation](https://supabase.com/docs)
+- [Expo Router](https://docs.expo.dev/router/introduction)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+*Created for our school project. Securing the future of rentals, one vault at a time.*
+```
