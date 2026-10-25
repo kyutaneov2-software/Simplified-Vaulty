@@ -1,8 +1,9 @@
 // src/app/_layout.tsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { StatusBar } from "expo-status-bar";
+import { supabase } from "../lib/supabase";
 
 export default function RootLayout() {
     return (
@@ -17,29 +18,59 @@ function RootLayoutNav() {
     const segments = useSegments();
     const router = useRouter();
 
+    // State to track if we are stll checking the MFA level
+    const [isCheckingAal, setIsCheckingAal] = useState(true);
+    const [needsMfa, setNeedsMfa] = useState(false);
+
+    // Check the AAL ( Assurance Level ) whenever the session changes
     useEffect(() => {
-        if (loading) return;
+        const checkAAL = async () => {
+            if(!session) {
+                setNeedsMfa(false);
+                setIsCheckingAal(false);
+                return;
+            }
+
+            const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+
+            if (!error && data ) {
+                // If they are currently at AAL1 but their account supports AAL2, they need to verify.
+                setNeedsMfa(data.currentLevel === "aal1" && data.nextLevel === "aal2");
+            }
+            
+            setIsCheckingAal(false);
+        }
+
+        checkAAL();
+    }, [session]);
+    
+    // Handle routing based on Auth && AAL state
+    useEffect(() => {
+        if (loading || isCheckingAal) return;
 
         const firstSegment = segments[0] as string | undefined;
-
-        // Check what group the user is currently in
         const inAppGroup = firstSegment === "(app)";
         const inAuthGroup = firstSegment === "(auth)";
+        const onChallengeScreen = firstSegment === "mfa-challenge";
+        const onMfaSetupScreen = firstSegment === "mfa-setup";
 
         if (session) {
-            // If user is logged in, and they are on the Welcome or Auth screens, send them to the App
-            if (!inAppGroup) {
+            if (needsMfa && !onChallengeScreen) {
+                router.replace("/mfa-challenge");
+                return;
+            }
+            if (!needsMfa && !inAppGroup && !onMfaSetupScreen) {
                 router.replace("/(app)/HomeScreen");
             }
         } else {
-            // If user is NOT logged in, and they try to access protected app screens, send to Sign In
-            if (inAppGroup) {
+            if (inAppGroup || onChallengeScreen || onMfaSetupScreen) {
                 router.replace("/(auth)/sign-in");
             }
         }
-    }, [session, loading, segments]);
+    }, [session, loading, segments, needsMfa, isCheckingAal]);
 
-    if (loading) {
+    // Show a blank screen while checking Auth & AAL
+    if (loading || isCheckingAal) {
         return null;
     }
 

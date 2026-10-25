@@ -1,4 +1,5 @@
-// src/app/(app)/profile.tsx
+// src/app/(app)/Profile.tsx
+import { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -6,23 +7,43 @@ import {
     TouchableOpacity,
     Alert,
     ScrollView,
+    ActivityIndicator,
 } from "react-native";
-// Import SafeAreaView for platform awareness
 import { SafeAreaView } from "react-native-safe-area-context";
+// ✅ FIX 1: Import useRouter
+import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
-// Import Theme
+// ✅ FIX 2: Import supabase client
+import { supabase } from "../../lib/supabase";
 import { Colors, Spacing, Typography, Shadows } from "../../theme";
 
-/**
- * Profile Screen component.
- * Displays user information and handles sign out.
- */
 export default function Profile() {
     const { user, signOut } = useAuth();
+    // ✅ Now useRouter will work
+    const router = useRouter();
+
+    const [isMfaEnabled, setIsMfaEnabled] = useState(false);
+    const [isCheckingMfa, setIsCheckingMfa] = useState(true);
+
+    useEffect(() => {
+        const checkMfaStatus = async () => {
+            // ✅ Now supabase will work
+            const { data, error } = await supabase.auth.mfa.listFactors();
+
+            if (!error && data?.totp) {
+                const hasVerifiedFactor = data.totp.some(
+                    (factor) => factor.status === "verified",
+                );
+                setIsMfaEnabled(hasVerifiedFactor);
+            }
+            setIsCheckingMfa(false);
+        };
+
+        checkMfaStatus();
+    }, []);
 
     const handleSignOut = () => {
-        // Platform-aware safety check before logging out
         Alert.alert(
             "Sign Out",
             "Are you sure you want to sign out of Vaulty?",
@@ -107,16 +128,28 @@ export default function Profile() {
                     </View>
                 </View>
 
-                {/* Security / Future MFA Card */}
+                {/* Security Card */}
                 <Text style={styles.sectionTitle}>Security</Text>
                 <View style={styles.card}>
-                    <TouchableOpacity style={styles.actionRow}>
+                    <TouchableOpacity
+                        style={styles.actionRow}
+                        onPress={() => router.push("/mfa-setup")}
+                        disabled={isCheckingMfa}
+                    >
                         <View style={styles.infoRow}>
                             <View style={styles.iconBox}>
                                 <Ionicons
-                                    name="lock-closed-outline"
+                                    name={
+                                        isMfaEnabled
+                                            ? "shield-checkmark"
+                                            : "lock-closed-outline"
+                                    }
                                     size={20}
-                                    color={Colors.primary}
+                                    color={
+                                        isMfaEnabled
+                                            ? Colors.success
+                                            : Colors.primary
+                                    }
                                 />
                             </View>
                             <View style={styles.infoTextContainer}>
@@ -125,16 +158,40 @@ export default function Profile() {
                                 >
                                     Two-Factor Auth
                                 </Text>
-                                <Text style={styles.label}>
-                                    TOTP (Setup coming soon)
-                                </Text>
+
+                                {isCheckingMfa ? (
+                                    <Text style={styles.label}>
+                                        Checking status...
+                                    </Text>
+                                ) : isMfaEnabled ? (
+                                    <Text
+                                        style={[
+                                            styles.label,
+                                            { color: Colors.success },
+                                        ]}
+                                    >
+                                        Enabled (TOTP)
+                                    </Text>
+                                ) : (
+                                    <Text style={styles.label}>
+                                        Setup TOTP Authenticator
+                                    </Text>
+                                )}
                             </View>
                         </View>
-                        <Ionicons
-                            name="chevron-forward"
-                            size={20}
-                            color={Colors.silver}
-                        />
+
+                        {isCheckingMfa ? (
+                            <ActivityIndicator
+                                size="small"
+                                color={Colors.silver}
+                            />
+                        ) : (
+                            <Ionicons
+                                name="chevron-forward"
+                                size={20}
+                                color={Colors.silver}
+                            />
+                        )}
                     </TouchableOpacity>
                 </View>
 
@@ -163,7 +220,7 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         padding: Spacing.lg,
-        paddingBottom: 40, // Extra padding for bottom tab bar
+        paddingBottom: 40,
     },
     header: {
         alignItems: "center",
@@ -248,7 +305,7 @@ const styles = StyleSheet.create({
         height: 1,
         backgroundColor: Colors.silver,
         marginVertical: Spacing.md,
-        marginLeft: 56, // Aligns divider with text, not icon
+        marginLeft: 56,
     },
     actionRow: {
         flexDirection: "row",
@@ -257,7 +314,7 @@ const styles = StyleSheet.create({
     },
     signOutButton: {
         flexDirection: "row",
-        backgroundColor: "#FEE2E2", // Light red background
+        backgroundColor: "#FEE2E2",
         padding: Spacing.md,
         borderRadius: 12,
         alignItems: "center",
