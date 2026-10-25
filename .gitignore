@@ -41,3 +41,8 @@ example
 # generated native folders
 /ios
 /android
+
+
+# the key
+.env
+.env.local
