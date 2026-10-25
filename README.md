@@ -252,6 +252,10 @@ Run this checklist to verify everything is wired correctly:
 
 ## 👥 Team
 
+- [Developer] Jeremy D Lobos
+- [SystemDesign] Markron Costantino
+- [Designer] Vince Rontos
+
 *Created as a school project — combining mobile development, cloud security, and embedded hardware.*
 
 > *"Securing the future of rentals, one vault at a time."* 🔐
