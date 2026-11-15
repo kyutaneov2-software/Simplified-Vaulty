@@ -40,7 +40,6 @@ export default function AppLayout() {
         >
             {/* 
                 Home Tab - maps to app/(app)/HomeScreen.tsx 
-                Make sure your file is named exactly 'HomeScreen.tsx'
             */}
             <Tabs.Screen
                 name="HomeScreen"
